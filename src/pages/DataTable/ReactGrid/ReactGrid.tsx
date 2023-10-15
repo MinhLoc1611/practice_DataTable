@@ -2,8 +2,10 @@ import {
   Grid,
   Table,
   TableHeaderRow,
+  VirtualTable,
+  PagingPanel
 } from "@devexpress/dx-react-grid-material-ui";
-import { SortingState, IntegratedSorting } from "@devexpress/dx-react-grid";
+import { SortingState, IntegratedSorting, PagingState, IntegratedPaging } from "@devexpress/dx-react-grid";
 import { AdsClick, RemoveRedEyeOutlined } from "@mui/icons-material";
 import { Box, Switch, SwitchProps, styled } from "@mui/material";
 import {
@@ -77,6 +79,8 @@ interface NameRowsProps {
 interface RowsUSDProps {
   value: number;
 }
+
+const getRowId = (rows: { name: string; }) => rows.name
 
 export default function ReactGrid() {
 
@@ -170,14 +174,20 @@ export default function ReactGrid() {
   );
   return (
     <Box display={"flex"}>
-      <Grid rows={rows} columns={columns}>
+      <Grid rows={rows} columns={columns} getRowId={getRowId}>
+      <PagingState
+          defaultCurrentPage={0}
+          pageSize={10}
+        />
+        <IntegratedPaging/>
         <SortingState columnExtensions={SortingSetting} />
         <IntegratedSorting />
-        <Table columnExtensions={columnsWidth} cellComponent={Cell} />
+        <VirtualTable height={500} columnExtensions={columnsWidth} cellComponent={Cell} />
         <TableHeaderRow
           contentComponent={TableHeaderContent}
           showSortingControls
         />
+        <PagingPanel/>
       </Grid>
     </Box>
   );
