@@ -3,19 +3,27 @@ import {
   Table,
   TableHeaderRow,
   VirtualTable,
-  PagingPanel
+  PagingPanel,
 } from "@devexpress/dx-react-grid-material-ui";
-import { SortingState, IntegratedSorting, PagingState, IntegratedPaging } from "@devexpress/dx-react-grid";
+import {
+  SortingState,
+  PagingState,
+  IntegratedSorting,
+  CustomPaging
+} from "@devexpress/dx-react-grid";
 import { AdsClick, RemoveRedEyeOutlined } from "@mui/icons-material";
 import { Box, Switch, SwitchProps, styled } from "@mui/material";
 import {
-  SortingSetting,
   columnsWidth,
-  rows,
   columns,
+  pageSize,
 } from "../../../settings/GridSettings";
 import DataPopover from "../../../component/ClickPopover";
 import EstimatedRow from "../../../component/EstimatedRow";
+import { UserType } from "../../../types/users.type";
+import { useGetUsersQuery } from "../../../api/apiSlice";
+import SpendFilter from "../../../component/SpendFilter";
+import { useState } from "react";
 
 const IOSSwitch = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -80,9 +88,22 @@ interface RowsUSDProps {
   value: number;
 }
 
-const getRowId = (rows: { name: string; }) => rows.name
-
 export default function ReactGrid() {
+
+    const [sorting, setSorting] = useState([]);
+
+    const [search, setSearch] = useState({
+        name: 'get',
+        value: null
+    })
+
+    
+    const [currentPage, setCurrentPage] = useState(0);
+    const {data, isFetching} = useGetUsersQuery({name: search.name, value: search.value, skip: (pageSize * currentPage)}, {refetchOnMountOrArgChange:true})
+    const rows: UserType[] | undefined = data?.content.data
+    const total: number | undefined = data?.content.total
+
+  const getRowId = (rows: { id: number }) => rows.id;
 
   const HeaderSwitch = ({ value, ...restProps }: HeaderSwitchProps) => (
     <Table.Cell {...restProps}>
@@ -101,7 +122,7 @@ export default function ReactGrid() {
 
   const EyeRows = ({ ...restProps }) => (
     <Table.Cell {...restProps}>
-      <DataPopover/>
+      <DataPopover />
     </Table.Cell>
   );
 
@@ -111,17 +132,17 @@ export default function ReactGrid() {
 
   interface EsConversionRowsProps {
     value: {
-        low: number,
-        medium: number,
-        high: number
-    }
+      low: number;
+      medium: number;
+      high: number;
+    };
   }
 
-  const EsConversionRows = ({value, ...restProps}: EsConversionRowsProps) => (
+  const EsConversionRows = ({ value, ...restProps }: EsConversionRowsProps) => (
     <Table.Cell {...restProps}>
-        <EstimatedRow low={value.low} medium={value.medium} high={value.high}/>
+      <EstimatedRow low={value.low} medium={value.medium} high={value.high} />
     </Table.Cell>
-  )
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Cell = (props: any) => {
@@ -144,8 +165,8 @@ export default function ReactGrid() {
     if (column.name === "eyeMetric" || column.name === "eyeMetric2") {
       return <EyeRows {...props} />;
     }
-    if(column.name === 'estimatedConversion') {
-        return <EsConversionRows {...props}/>
+    if (column.name === "estimatedConversion") {
+      return <EsConversionRows {...props} />;
     }
     return <Table.Cell {...props} />;
   };
@@ -167,28 +188,36 @@ export default function ReactGrid() {
     >
       {column.name === "eyeMetric" || column.name === "eyeMetric2" ? (
         <RemoveRedEyeOutlined />
-      ) : (
+      ) : 
+      column.name === 'spend' ? (
+        <SpendFilter name={children} setSearch={setSearch} setSorting={setSorting}/>
+    ) :
+      (
         children
       )}
     </TableHeaderRow.Content>
   );
   return (
-    <Box display={"flex"}>
-      <Grid rows={rows} columns={columns} getRowId={getRowId}>
-      <PagingState
-          defaultCurrentPage={0}
-          pageSize={10}
+    <Box>
+      {!isFetching && (
+        <Grid rows={rows} columns={columns} getRowId={getRowId}>
+          <PagingState currentPage={currentPage} onCurrentPageChange={setCurrentPage} pageSize={pageSize} />
+          <CustomPaging
+          totalCount={total}
         />
-        <IntegratedPaging/>
-        <SortingState columnExtensions={SortingSetting} />
-        <IntegratedSorting />
-        <VirtualTable height={500} columnExtensions={columnsWidth} cellComponent={Cell} />
-        <TableHeaderRow
-          contentComponent={TableHeaderContent}
-          showSortingControls
-        />
-        <PagingPanel/>
-      </Grid>
+          <SortingState sorting={sorting}/>
+          <IntegratedSorting />
+          <VirtualTable
+            height={500}
+            columnExtensions={columnsWidth}
+            cellComponent={Cell}
+          />
+          <TableHeaderRow
+            contentComponent={TableHeaderContent}
+          />
+          <PagingPanel />
+        </Grid>
+      )}
     </Box>
   );
 }

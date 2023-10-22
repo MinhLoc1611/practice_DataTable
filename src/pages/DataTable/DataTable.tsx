@@ -11,12 +11,14 @@ import { Box, IconButton, Typography } from "@mui/material";
 import ButtonPopover from "../../component/HoverPopover";
 import ReactGrid from "./ReactGrid/ReactGrid";
 
+
 const BoxCenter = {
   display: "flex",
   alignItems: "center",
 };
 
 export default function DataTable() {
+
   return (
     <Box p={2}>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
@@ -48,7 +50,7 @@ export default function DataTable() {
         <Typography>Filter</Typography>
       </Box>
       <Typography sx={{ mt: 3, mb: 2, color: "grey.700" }}>
-        Showing <b>198</b> from <b>893</b> results
+        Showing <b>10</b> from <b>21</b> results
       </Typography>
       <ReactGrid/>
     </Box>
