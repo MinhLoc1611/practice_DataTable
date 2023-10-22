@@ -22,7 +22,7 @@ import DataPopover from "../../../component/ClickPopover";
 import EstimatedRow from "../../../component/EstimatedRow";
 import { UserType } from "../../../types/users.type";
 import { useGetUsersQuery } from "../../../api/apiSlice";
-import SpendFilter from "../../../component/SpendFilter";
+import SpendFilter from "../../../component/SpendFilter/SpendFilter";
 import { useState } from "react";
 
 const IOSSwitch = styled((props: SwitchProps) => (

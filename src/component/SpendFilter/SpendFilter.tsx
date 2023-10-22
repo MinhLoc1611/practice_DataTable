@@ -10,6 +10,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import HoverSpend from "./HoverSpend";
 
 const ButtonStyle = {
   color: "#808192",
@@ -58,15 +59,10 @@ export default function SpendFilter({
 
   return (
     <Box>
-      <Button
-        sx={{
-          color: "black",
-          textTransform: "capitalize",
-        }}
-        onClick={handleClick}
-      >
-        {name}
-      </Button>
+      <HoverSpend
+        handleClick={handleClick}
+        name={name}
+      />
       <Popover
         id={id}
         open={open}

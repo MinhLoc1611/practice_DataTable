@@ -1,19 +1,14 @@
 import React from "react";
-import { Box, IconButton, Popover, Typography } from "@mui/material";
+import { Box, Button, Popover, Typography } from "@mui/material";
 
-const TypoPopover = {
-  p: 1,
-  bgcolor: "secondary.main",
-  color: "secondary.contrastText",
-};
-
-interface TypeProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  icon: any;
+export default function HoverSpend({
+  handleClick,
+  name,
+}: {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleClick: any;
   name: string;
-}
-
-export default function ButtonPopover({ icon, name }: TypeProps) {
+}) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -24,16 +19,18 @@ export default function ButtonPopover({ icon, name }: TypeProps) {
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-
   return (
-    <Box>
-      <IconButton
-        sx={{ mx: 2 }}
+    <Box onClick={handleClick}>
+      <Button
+        sx={{
+          color: "black",
+          textTransform: "capitalize",
+        }}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
       >
-        {icon}
-      </IconButton>
+        {name}
+      </Button>
       <Popover
         id="mouse-over-popover"
         sx={{
@@ -43,16 +40,24 @@ export default function ButtonPopover({ icon, name }: TypeProps) {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left",
+          horizontal: "right",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "left",
+          horizontal: "right",
         }}
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        <Typography sx={TypoPopover}>{name}</Typography>
+        <Typography
+          sx={{
+            p: 0.5,
+            bgcolor: "secondary.main",
+            color: "secondary.contrastText",
+          }}
+        >
+          Filter
+        </Typography>
       </Popover>
     </Box>
   );
